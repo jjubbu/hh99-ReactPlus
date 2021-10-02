@@ -5,7 +5,7 @@ import { Text, Grid} from ".";
 
 const Input = (props)=> {
     const Ref = useRef();
-    const {label, placeholder, _onChange} =props;
+    const {label, placeholder, _onChange, type} =props;
  
     //value에 따라 값 저장시 분류
 
@@ -13,7 +13,7 @@ const Input = (props)=> {
         <React.Fragment>
             <Grid>
             <Text margin="0">{label}</Text>
-            <TagInput ref={Ref} placeholder={placeholder} onChange={_onChange}/>
+            <TagInput ref={Ref} placeholder={placeholder} onChange={_onChange} type={type}/>
             </Grid>
         </React.Fragment>
     )
@@ -23,7 +23,8 @@ const Input = (props)=> {
 Input.defaultProps = {
     label : "텍스트",
     placeholder: "입력해주세요",
-    _onChange: () => {}
+    _onChange: () => {},
+    type: "text",
 }
 
 const TagInput = styled.input`
