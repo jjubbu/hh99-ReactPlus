@@ -1,15 +1,18 @@
 import firebase from 'firebase/app';
 import 'firebase/auth';
 
+// import dotenv from "dotenv"
+
+// dotenv.config()
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCpYeK6vspVXkxZDgTBLragMVRTKvs8Imw",
+  apiKey: process.env.REACT_APP_APIKEY,
   authDomain: "seona-imagecommunity.firebaseapp.com",
   projectId: "seona-imagecommunity",
   storageBucket: "seona-imagecommunity.appspot.com",
   messagingSenderId: "661466134731",
-  appId: "1:661466134731:web:c7ecb50f298d3126e5c34e",
-  measurementId: "G-6ZXFTEHM6V"
+  appId: process.env.REACT_APP_APPID,
+  measurementId: process.env.REACT_APP_MEASUREMENTID
 };
 
 // Initialize Firebase
