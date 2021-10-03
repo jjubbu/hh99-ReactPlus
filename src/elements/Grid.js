@@ -4,7 +4,7 @@ import styled from "styled-components";
 const Grid = (props) => {
 
     //스타일에 넣을 props 불러오기
-    const {is_flex, width, padding, margin, background, children} = props; 
+    const {is_flex, width, padding, margin, background, children, positionR, gap} = props; 
 
     //불러온 props중 스타일만 분리
     const styles = {
@@ -12,7 +12,9 @@ const Grid = (props) => {
         width: width,
         padding: padding,
         margin:margin,
-        background: background
+        background: background,
+        positionR:positionR,
+        gap:gap
     }
 
     return <React.Fragment>
@@ -27,7 +29,9 @@ Grid.defaultProps = {
     width:"100%",
     padding: false,
     margin:false,
-    background:false
+    background:false,
+    positionR: false,
+    gap:"0",
 }
 
 const GridBox = styled.div`
@@ -38,7 +42,9 @@ const GridBox = styled.div`
     ${(props)=>props.padding? `padding: ${props.padding};`:""}
     ${(props)=>props.margin? `margin: ${props.margin};`:""}
     ${(props)=>props.background? `background: ${props.background};`:""}
+    ${(props)=>props.positionR? `position: relative`:""}
     ${(props)=>props.is_flex? `display:flex; align-items:center; justify-content:space-between` :""};
+    ${(props)=>props.is_flex? `gap:${props.gap}` :""};
 `
 
 

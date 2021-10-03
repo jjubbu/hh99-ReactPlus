@@ -1,10 +1,17 @@
 import React from "react";
+
+
 import {Grid, Image, Text} from "../elements"
 
+
+
+
+
 const Post = (props) => {
+
     return (
         <React.Fragment>
-            <Grid padding="">
+            <Grid padding="" >
                 <Grid is_flex>
                     <Image shape="circle" src={props.src}/>
                     <Text bold>{props.user_info.user_name}</Text>
@@ -35,5 +42,6 @@ Post.defaultProps = {
     comment_count:10,
     insert_dt:"2021-09-30" 
 }; 
+
 
 export default Post;

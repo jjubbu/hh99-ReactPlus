@@ -1,5 +1,6 @@
 import React from "react";
 import { Grid , Text, Input,Button} from "../elements";
+import { emailCheck } from "../shared/common";
 
 import { useDispatch } from "react-redux";
 import { actionCreators as userActions} from "../redux/modules/user";
@@ -23,6 +24,9 @@ const Signup =()=>{
         //인풋창 공란이면 안넘어가게!
         if (id === "" || pw === "" || user_name === "" | pw_check === ""){
             return;
+        }
+        if (!emailCheck(id)){
+            window.alert('아이디를 이메일 형식으로 입력해주세요.')
         }
         dispatch(userActions.signupFB(id, pw, user_name));
     }

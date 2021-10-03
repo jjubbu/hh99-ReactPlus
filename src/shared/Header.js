@@ -1,7 +1,7 @@
 import React from "react";
+import Permit from "./Permit";
 import { Grid, Text, Button } from "../elements";
 import { getCookie, deleteCookie } from "./Cookie";
-
 import { useSelector , useDispatch } from "react-redux";
 import { actionCreators as userActions } from "../redux/modules/user";
 
@@ -9,11 +9,11 @@ import {history} from "../redux/store"
 import { apiKey } from "./firebase";
 
 
+
+
 const Header = () => {
-
-    const is_login = useSelector((state)=> state.user.is_login);
     const dispatch = useDispatch();
-
+    const is_login = useSelector((state)=> state.user.is_login);
     const session_key = `firebase:authUser:${apiKey}:[DEFAULT]`;
     const is_session = sessionStorage.getItem(session_key)? true : false;
     
@@ -28,7 +28,7 @@ const Header = () => {
                     <Grid is_flex>
                         <Button text="내 정보" _onClick={()=>{}}></Button>
                         <Button text="알림" _onClick={()=>{}}></Button>
-                        <Button text="로그아웃" _onClick={()=>{dispatch(userActions.logOut({}));}}></Button>
+                        <Button text="로그아웃" _onClick={()=>{dispatch(userActions.logoutFB({}));}}></Button>
                     </Grid>
                 </Grid>
             </React.Fragment>

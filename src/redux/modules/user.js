@@ -1,7 +1,7 @@
 //유저 로그인 정보 가져오는 모듈
 import {createAction, handleActions} from "redux-actions";
 import {produce} from "immer";
-import {setCookie, getCookie, deleteCookie} from "../../shared/Cookie";
+import {setCookie, deleteCookie} from "../../shared/Cookie";
 import {auth} from "../../shared/firebase";
 import firebase from 'firebase/app';
 
@@ -9,11 +9,6 @@ import firebase from 'firebase/app';
 const initialState = {
     user: null,
     is_login: false
-}
-
-//유저 정보
-const user_initial = {
-    user_name: "seon"
 }
 
 //액션타입 생성
@@ -97,11 +92,21 @@ const loginCheckFB = () => {
                     uid: user.uid
                 }))
             }else{
-                dispatch(logOut())
+                dispatch(logOut());
             }
         })
     }
 }
+
+const logoutFB = () => {
+    return function (dispatch, getState, {history}) {
+      auth.signOut().then(() => {
+        dispatch(logOut());
+        //뒤로가기할때 메인화면으로 바꿔치기!
+        history.replace("/");
+      });
+    };
+  };
 
 // handleActions, immer 를 이용한 리듀서 draft = immer가 원본값을 복사한 값 createAction을 통해
 // 만들어진 액션 생성함수에서 넘겨진 값은 payload에 저장된다.
@@ -125,7 +130,8 @@ const actionCreators = {
     getUser,
     signupFB,
     loginFB,
-    loginCheckFB
+    loginCheckFB,
+    logoutFB
 };
 
 export {

@@ -1,5 +1,6 @@
 import React from "react";
 import { Grid , Text, Input,Button} from "../elements";
+import { emailCheck } from "../shared/common";
 
 import {useDispatch} from "react-redux";
 import {actionCreators as userActions} from "../redux/modules/user";
@@ -13,6 +14,10 @@ const Login =()=>{
         //미들웨어로 작업 안하면 페이지 안바뀜..!
         if(id === "" || pw === ""){
             window.alert("아이디 혹은 비밀번호가 공란입니다. 입력해주세요");
+            return;
+        }
+        if(!emailCheck(id)){
+            window.alert("아이디를 이메일 형식으로 입력해주세요.");
             return;
         }
         dispatch(userActions.loginFB(id, pw));
