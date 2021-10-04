@@ -1,22 +1,18 @@
 import React from "react";
 
-import {Grid, Input, Button} from "../elements"
+import {Grid, Input, Button} from "../elements";
 
-const CommentWrite = (props) => {
+const CommentWrite = () => {
 
     return (
-        <React.Fragment>
-            <Grid is_flex="is_flex">
-                <Input label="" placeholder="댓글 내용을 입력해주세요:)"/>
-                <Grid width="50px" margin="0 0 0 15px">
-                    <Button text="작성" width="50px"/>
-                </Grid>
-            </Grid>
-        </React.Fragment>
-    )
+      <React.Fragment>
+        <Grid padding="16px" is_flex>
+          <Input placeholder="댓글 내용을 입력해주세요 :)" />
+          <Button width="50px" margin="0px 2px 0px 2px">작성</Button>
+        </Grid>
+      </React.Fragment>
+    );
 }
 
-//기본적으로 필요한 props를 넘겨주는 방식
-CommentWrite.defaultProps = {};
-
 export default CommentWrite;
+
