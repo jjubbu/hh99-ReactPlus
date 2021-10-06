@@ -25,7 +25,7 @@ const Image = (props) => {
 
     return (
         <React.Fragment>
-            
+            <ImageDefault {...styles}></ImageDefault>
         </React.Fragment>
     )
 }
@@ -36,9 +36,20 @@ Image.defaultProps = {
   size: 36,
 };
 
+const ImageDefault = styled.div`
+  --size: ${(props) => props.size}px;
+  width: var(--size);
+  height: var(--size);
+  background-image: url("${(props) => props.src}");
+  background-size: cover;
+  background-position: center;
+  border: 2px solid skyblue;
+  box-sizing: border-box;
+`;
+
+
 const AspectOutter = styled.div`
     width: 100%;
-    min-width: 250px;
 `;
 
 const AspectInner = styled.div`
@@ -47,6 +58,7 @@ const AspectInner = styled.div`
     overflow: hidden;
     background-image: url("${(props) => props.src}");
     background-size: cover;
+    background-position: center;
 `;
 
 const ImageCircle = styled.div`
@@ -54,8 +66,8 @@ const ImageCircle = styled.div`
     width: var(--size);
     height: var(--size);
     border-radius: var(--size);
-
     background-image: url("${(props) => props.src}");
+    background-position: center;
     background-size: cover;
     margin: 4px;
 `;

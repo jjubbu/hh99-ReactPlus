@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { Text, Grid } from "./index";
 
 const Input = (props) => {
-  const { label, placeholder, _onChange, type, multiLine } = props;
+  const { label, placeholder, _onChange, type, multiLine ,value} = props;
   
   if(multiLine){
     return (
@@ -14,6 +14,7 @@ const Input = (props) => {
           rows={10}
           placeholder={placeholder}
           onChange={_onChange}
+          value={value}
         ></ElTextarea>
       </Grid>
     );
@@ -23,7 +24,7 @@ const Input = (props) => {
     <React.Fragment>
       <Grid>
         {label && <Text margin="0px">{label}</Text>}
-        <ElInput type={type} placeholder={placeholder} onChange={_onChange} />
+        <ElInput type={type} placeholder={placeholder} onChange={_onChange}  />
       </Grid>
     </React.Fragment>
   );
@@ -35,6 +36,7 @@ Input.defaultProps = {
   placeholder: "텍스트를 입력해주세요.",
   type: "text",
   _onChange: () => {},
+  value:"",
 };
 
 const ElTextarea = styled.textarea`

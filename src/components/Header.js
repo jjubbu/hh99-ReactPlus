@@ -28,9 +28,9 @@ const Header = (props) => {
             </Text>
           </Grid>
 
-          <Grid is_flex>
+          <Grid is_flex gap="10px">
             <Button text="내정보"></Button>
-            <Button text="알림"></Button>
+            <Button text="알림" _onClick={()=>{history.push('/noti')}}></Button>
             <Button
               text="로그아웃"
               _onClick={() => {

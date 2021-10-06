@@ -1,9 +1,9 @@
 import React from "react";
-// import Grid from "../elements/Grid";
-// import Image from "../elements/Image";
-// import Text from "../elements/Text";
+import { useSelector } from "react-redux";
+import { history } from "../redux/configureStore";
 
-import {Grid, Image, Text} from "../elements";
+import {Grid, Image, Text, Button} from "../elements";
+
 
 
 const Post = (props) => {
@@ -17,14 +17,15 @@ const Post = (props) => {
               <Text bold>{props.user_info.user_name}</Text>
             </Grid>
             <Grid is_flex width="auto">
-              <Text>{props.insert_dt}</Text>
+              <Text width="max-content">{props.insert_dt}</Text>
+              {props.is_me && <Button text="수정" _onClick={()=>{history.push(`/write/${props.id}`);}}/>}
             </Grid>
           </Grid>
           <Grid padding="16px">
             <Text>{props.contents}</Text>
           </Grid>
           <Grid>
-            <Image shape="rectangle" src={props.src} />
+            <Image shape="rectangle" src={props.image_url} />
           </Grid>
           <Grid padding="16px">
             <Text margin="0px" bold>댓글 {props.comment_cnt}개</Text>
