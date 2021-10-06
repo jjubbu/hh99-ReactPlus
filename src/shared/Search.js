@@ -7,11 +7,12 @@ const Search = () => {
 
     const [text, setText] = React.useState("");
 
-    //다바운스 주기! 밀리세컨드로 마지막의 1초후 실행
+    //마지막의 1초후 실행
     const debounce = _.debounce((e)=>{
         console.log("debounce :::",e.target.value);
     }, 1000)
-    //디바운스 주기! 1초마다 실행
+    
+    //1초마다 실행
     const throttle = _.throttle((e)=>{
         console.log("throttle:::",e.target.value);
     },1000)
