@@ -8,13 +8,18 @@ import {actionCreators as imageAction} from './image'
 const SET_POST = "SET_POST";
 const ADD_POST = "ADD_POST";
 const EDIT_POST = "EDIT_POST";
+const LOADING = "LOADING";
 
 const setPost = createAction(SET_POST, (post_list) => ({post_list}));
 const addPost = createAction(ADD_POST, (post) => ({post}));
 const editPost = createAction(EDIT_POST, (post_id, post) => ({post_id, post}));
+const loading = createAction(LOADING, (is_loading)=>({is_loading}));
 
 const initialState = {
-    list: []
+    list: [],
+    //시작점 정보, 다음것 정보, 개수
+    paging: {start:null, next:null, size:3},
+    is_loadign:false,
 }
 
 const initialPost = {
@@ -86,7 +91,7 @@ const addPostFB = (contents = "",) => {
                     window.alert("앗 이미지 업로드에 문제가 있어요!");
                     console.log("앗 이미지 업로드에 문제가 있어요!", err);
                 })
-        })
+            })
 
     }
 }
@@ -94,16 +99,69 @@ const addPostFB = (contents = "",) => {
 //firebase의 게시글 정보를 전부 가져오자!
 const getPostFB = () => {
     return function (dispatch, getState, {history}) {
+
+        dispatch(loading(true));
         const postDB = firestore.collection("post");
+
+        //db에서 두개만 가져오고 날짜별 역순 정렬!
+        let query = postDB
+            .orderBy("insert_dt","desc")
+            .limit(2);
+
+        query
+            .get()
+            .then(docs => {
+                let post_list = [];
+                docs.forEach((doc) => {
+                    // let _post = {     id: doc.id,     ...doc.data() }; let post = {     id:
+                    // doc.id,     user_info: {         user_name: _post.user_name, user_profile:
+                    // _post.user_profile,         user_id:_post.user_id,     }, image_url:
+                    // _post.image_url,     contents: _post.contents,     comment_cnt:
+                    // _post.comment_cnt,     insert_dt: _post.insert_dt } 위와 동일한 결과를 보이지만 좀 더 수식으로
+                    // 해결한 것.
+                    let _post = doc.data();
+                    //key값을 배열로 만들어주고 배열 안의 개수만큼 함수 돌리기 (reduce)
+                    let post = Object
+                        .keys(_post)
+                        .reduce((a, current) => {
+                            //현재 key값에 user_가 포함된다면
+                            if (current.indexOf("user_") !== -1) {
+                                //user_info안에 해당 값들을 넣어준다.
+                                return {
+                                    ...a,
+                                    user_info: {
+                                        ...a.user_info,
+                                        [current]: _post[current]
+                                    }
+                                }
+                            }
+                            //맨 처음에는 id:doc.id를 반환하고 그 이후부터 key:_post[key] ==value 를 이전 반환값에 추가해서 반환!
+                            return {
+                                ...a,
+                                [current]: _post[current]
+                            }
+                        }, {
+                            id: doc.id,
+                            user_info: {}
+                        });
+
+                    post_list.push(post);
+
+                });
+                dispatch(setPost(post_list));
+
+            })
+
+        return;
         postDB
             .get()
             .then((docs) => {
                 let post_list = [];
                 docs.forEach((doc) => {
                     // let _post = {     id: doc.id,     ...doc.data() }; let post = {     id:
-                    // doc.id,     user_info: {         user_name: _post.user_name,
-                    // user_profile: _post.user_profile,         user_id:_post.user_id,     },
-                    // image_url: _post.image_url,     contents: _post.contents,     comment_cnt:
+                    // doc.id,     user_info: {         user_name: _post.user_name, user_profile:
+                    // _post.user_profile,         user_id:_post.user_id,     }, image_url:
+                    // _post.image_url,     contents: _post.contents,     comment_cnt:
                     // _post.comment_cnt,     insert_dt: _post.insert_dt } 위와 동일한 결과를 보이지만 좀 더 수식으로
                     // 해결한 것.
                     let _post = doc.data();
@@ -142,56 +200,75 @@ const getPostFB = () => {
 
 //post_id 값이 안들어오면 null을 반환해서 튕겨내기..!
 const editPostFB = (post_id = null, post = {}) => {
-    return function (dispatch, getState, {history}){
-        if(!post_id){
+    return function (dispatch, getState, {history}) {
+        if (!post_id) {
             return;
         }
         const _image = getState().image.preview;
-        const _post_idx = getState().post.list.findIndex(p=>p.id === post_id);
-        const _post = getState().post.list[_post_idx];
+        const _post_idx = getState()
+            .post
+            .list
+            .findIndex(p => p.id === post_id);
+        const _post = getState()
+            .post
+            .list[_post_idx];
 
         // console.log("포스트아이디확인",_post);
         const postDB = firestore.collection("post");
-        
+
         //이미지가 그대로일때
-        if(_image === _post.image_url){
+        if (_image === _post.image_url) {
             //포스트 아이디로 찾은 문서 내용물을 post로 업데이트!
-            postDB.doc(post_id).update(post).then(doc=>{
-                dispatch(editPost(post_id, {...post}))
-                history.replace("/");
-            });
+            postDB
+                .doc(post_id)
+                .update(post)
+                .then(doc => {
+                    dispatch(editPost(post_id, {
+                        ...post
+                    }))
+                    history.replace("/");
+                });
             return;
-        }else{
+        } else {
             //이미지가 변경되었을때
             const user_id = getState().user.user.uid;
             const upLoad = storage
-            .ref(
-                `images/${user_id}_${new Date().getTime()}`
-            )
-            .putString(_image, 'data_url');
+                .ref(`images/${user_id}_${new Date().getTime()}`)
+                .putString(_image, 'data_url');
 
             upLoad.then(snapshot => {
                 snapshot
-                .ref
-                .getDownloadURL()
-                .then(url => {
-                    console.log(url);
-                    return url;
-                })
-                .then(url => {
-                    postDB.doc(post_id).update({...post, image_url:url}).then(doc=>{
-                        dispatch(editPost(post_id, {...post, image_url:url}))
-                        history.replace("/");
+                    .ref
+                    .getDownloadURL()
+                    .then(url => {
+                        console.log(url);
+                        return url;
                     })
-                })
-                .catch((err) => {
-                    window.alert("앗 이미지 업로드에 문제가 있어요!");
-                    console.log("앗 이미지 업로드에 문제가 있어요!", err);
-                })
-            });    
+                    .then(url => {
+                        postDB
+                            .doc(post_id)
+                            .update({
+                                ...post,
+                                image_url: url
+                            })
+                            .then(doc => {
+                                dispatch(editPost(post_id, {
+                                    ...post,
+                                    image_url: url
+                                }))
+                                history.replace("/");
+                            })
+                    })
+                    .catch((err) => {
+                        window.alert("앗 이미지 업로드에 문제가 있어요!");
+                        console.log("앗 이미지 업로드에 문제가 있어요!", err);
+                    })
+                });
         }
-    }    
+    }
 }
+
+
 export default handleActions({
     [SET_POST]: (state, action) => produce(state, (draft) => {
         //getPostFB로 새로 정한 post_list를 state의 list에 넣어준다!
@@ -203,11 +280,19 @@ export default handleActions({
             .list
             .unshift(action.payload.post);
     }),
-    [EDIT_POST]:(state, action) => produce(state, (draft)=>{
+    [EDIT_POST]: (state, action) => produce(state, (draft) => {
         //몇번째 덩어리를 수정할지!
-        let idx = draft.list.findIndex((p)=>p.id === action.payload.post_id);
-        draft.list[idx] = {...draft.list[idx], ...action.payload.post}
+        let idx = draft
+            .list
+            .findIndex((p) => p.id === action.payload.post_id);
+        draft.list[idx] = {
+            ...draft.list[idx],
+            ...action.payload.post
+        }
         console.log(draft.list)
+    }),
+    [LOADING]:(state, action)=> produce(state, (draft)=>{
+        draft.is_loading = action.payload.is_loading;
     })
 }, initialState);
 

@@ -43,6 +43,7 @@ const Login = (props) => {
             _onChange={(e) => {
               setId(e.target.value);
             }}
+            onSubmit={login}
           />
         </Grid>
 
@@ -53,7 +54,9 @@ const Login = (props) => {
             type="password"
             _onChange={(e) => {
               setPwd(e.target.value);
-            }}
+            }
+          }
+          onSubmit={login}
           />
         </Grid>
 
